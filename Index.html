@@ -619,10 +619,19 @@ const firebaseWriteQueue = {};
 let firebaseWriteTimer = null;
 
 const _lsSetItem = LS.setItem.bind(LS);
+const _lsGetItem = LS.getItem.bind(LS);
+const firebasePendingWrites = {};
 LS.setItem = (key, value) => {
+  const existing = _lsGetItem(key);
+  const hadKey = existing !== null && existing !== undefined;
   _lsSetItem(key, value);
-  if(firebaseReady && !firebaseSuppressWrite && firebaseKeys.has(key)){
-    queueFirebaseWrite(key, value);
+  if(firebaseKeys.has(key)){
+    if(firebaseReady && !firebaseSuppressWrite){
+      queueFirebaseWrite(key, value);
+    } else if(!firebaseReady && hadKey){
+      // preserve local changes before firebase sync completes
+      firebasePendingWrites[key] = value;
+    }
   }
 };
 
@@ -768,12 +777,24 @@ async function initFirebaseSync(){
   try{
     const snap = await firebaseDb.ref(firebaseRootPath).once('value');
     const data = snap.val();
+    const pendingKeys = Object.keys(firebasePendingWrites);
+    const hasPending = pendingKeys.length > 0;
     if(data){
-      applyRemoteData(data);
+      if(hasPending){
+        const merged = {...data};
+        pendingKeys.forEach(k=>{ merged[k] = parseFirebaseValue(firebasePendingWrites[k]); });
+        applyRemoteData(merged);
+      } else {
+        applyRemoteData(data);
+      }
     } else {
       seedFirebaseFromLocal();
     }
     firebaseReady = true;
+    if(hasPending){
+      pendingKeys.forEach(k=> queueFirebaseWrite(k, firebasePendingWrites[k]));
+      pendingKeys.forEach(k=>{ delete firebasePendingWrites[k]; });
+    }
     startFirebaseListener();
   }catch(err){
     console.warn('Firebase sync gagal', err);
@@ -1542,9 +1563,10 @@ function saveAduan(imageData){
   };
   aduanList.unshift(obj);
   LS.setItem('aduanList', JSON.stringify(aduanList));
-  if(safeGet('statusMsg')) safeGet('statusMsg').innerText = 'Aduan dihantar.';
   if(complaintForm) complaintForm.reset();
   applyStudentSession();
+  const statusEl = safeGet('statusMsg');
+  if(statusEl) statusEl.innerText = 'Aduan dihantar.';
   renderComplaints();
   renderAdminList();
   renderRatingAnalytics();
