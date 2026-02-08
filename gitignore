@@ -1,0 +1,12 @@
+# Node modules (if using node.js)
+node_modules/
+
+# .env files (if sensitive data is included)
+.env
+
+# Log files
+*.log
+
+# IDE settings
+.idea/
+.vscode/

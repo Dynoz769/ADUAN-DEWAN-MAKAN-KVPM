@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sistem Aduan Dewan Makan - Portal Korporat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7fbff;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 28px 16px 42px;
+    }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 12px 26px rgba(15,35,55,0.08);
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 16px;
+      color: #0c6fa0;
+    }
+    button {
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0d84b8;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="top-nav">
+      <div class="brand">Sistem Aduan Dewan Makan</div>
+      <div class="nav-buttons">
+        <button type="button" data-target="home" onclick="showSection('home')">Halaman Utama</button>
+        <button type="button" data-target="pelajar" onclick="showSection('pelajar')">Borang Pelajar</button>
+        <button type="button" data-target="senarai" onclick="showSection('senarai')">Senarai Aduan</button>
+        <button type="button" data-target="admin" onclick="showSection('admin')">Panel Admin</button>
+        <button type="button" data-target="menu" onclick="showSection('menu')">Menu Makan Asrama</button>
+      </div>
+    </nav>
+
+    <header class="hero-card card">
+      <h1>Panel Aduan & Pemantauan</h1>
+      <div class="badge-live">LIVE</div>
+      <p>Automasi aduan pelajar, status tindakan, dan analitik rating dalam satu paparan.</p>
+    </header>
+
+    <section id="home">
+      <h2>Halaman Utama | Sila Login</h2>
+      <form id="unifiedLogin">
+        <label>No Kad Pengenalan
+          <input type="text" id="login_identifier" required>
+        </label>
+        <label>Kata Laluan
+          <input type="password" id="login_password" required>
+        </label>
+        <button type="submit">Log Masuk</button>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    function showSection(id){
+      document.querySelectorAll('section').forEach(section => {
+        section.style.display = 'none';
+      });
+      document.getElementById(id).style.display = 'block';
+    }
+  </script>
+</body>
+</html>
