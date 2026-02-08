@@ -24,12 +24,12 @@ const firebaseDatabaseURL = "https://sistem-ipeey-default-rtdb.asia-southeast1.f
 const firebaseConfig = {
   apiKey: "AIzaSyBpW-jzqXMLLI0wAJnaLAj-759Ced_56rA",
   authDomain: "sistem-ipeey.firebaseapp.com",
+  databaseURL: firebaseDatabaseURL,
   projectId: "sistem-ipeey",
   storageBucket: "sistem-ipeey.firebasestorage.app",
   messagingSenderId: "268990232717",
   appId: "1:268990232717:web:e2d2c05105b4b948044ac4",
-  measurementId: "G-H40EQGY7VZ",
-  databaseURL: firebaseDatabaseURL
+  measurementId: "G-H40EQGY7VZ"
 };
 
 const firebaseRootPath = 'sistemAduanDewanMakan';
