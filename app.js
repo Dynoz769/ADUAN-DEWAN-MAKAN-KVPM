@@ -1341,19 +1341,63 @@ function updateStatus(i,v){
 /* -------------------------
    Edit complaint (admin)
    ------------------------- */
+let editingComplaintIndex = null;
 function editComplaint(i){
   if(!isAdmin){ alert('Hanya admin boleh edit!'); return; }
   const c = aduanList[i];
   if(!c) return;
-  const newName = prompt('Nama:', c.name); if(newName===null) return;
-  const newDorm = prompt('Dorm:', c.dorm); if(newDorm===null) return;
-  const newMeal = prompt('Waktu Makan:', c.meal_type); if(newMeal===null) return;
-  const newRating = prompt('Rating (1-5):', c.rating); if(newRating===null) return;
-  const newMessage = prompt('Aduan:', c.message); if(newMessage===null) return;
+  editingComplaintIndex = i;
+  const setVal = (id,val)=>{ const el = safeGet(id); if(el) el.value = val; };
+  setVal('edit_name', c.name || '');
+  setVal('edit_ic', c.ic || '');
+  setVal('edit_dorm', c.dorm || '');
+  setVal('edit_meal_type', c.meal_type || 'Sarapan');
+  const mealEl = safeGet('edit_meal_type');
+  if(mealEl && !mealEl.value) mealEl.value = 'Sarapan';
+  setVal('edit_rating', c.rating || 1);
+  setVal('edit_message', c.message || '');
+  const msg = safeGet('editMsg'); if(msg) msg.innerText = '';
+  const modal = safeGet('editModal');
+  if(modal) modal.style.display = 'flex';
+}
 
-  aduanList[i] = {...c, name:newName, dorm:newDorm, meal_type:newMeal, rating:parseInt(newRating)||c.rating, message:newMessage};
-  LS.setItem('aduanList', JSON.stringify(aduanList));
-  renderComplaints(); renderAdminList(); renderRatingAnalytics();
+function closeEditModal(e){
+  if(e){ e.stopPropagation(); }
+  const modal = safeGet('editModal');
+  if(modal) modal.style.display = 'none';
+  editingComplaintIndex = null;
+}
+
+function wireEditComplaintForm(){
+  const form = safeGet('editComplaintForm');
+  if(!form) return;
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    if(!isAdmin){ alert('Hanya admin.'); return; }
+    const i = editingComplaintIndex;
+    const c = aduanList[i];
+    const msg = safeGet('editMsg');
+    if(!c){ if(msg) msg.innerText = 'Aduan tidak ditemui.'; return; }
+
+    const name = (safeGet('edit_name')?.value || '').trim();
+    const icRaw = (safeGet('edit_ic')?.value || '').trim();
+    const ic = normalizeIc(icRaw);
+    const dorm = (safeGet('edit_dorm')?.value || '').trim();
+    const meal = (safeGet('edit_meal_type')?.value || '').trim();
+    const ratingVal = parseInt(safeGet('edit_rating')?.value, 10);
+    const message = (safeGet('edit_message')?.value || '').trim();
+
+    if(!name){ if(msg) msg.innerText = 'Nama diperlukan.'; return; }
+    if(icRaw && ic.length !== 12){ if(msg) msg.innerText = 'IC mesti 12 angka.'; return; }
+    if(!meal){ if(msg) msg.innerText = 'Sila pilih waktu makan.'; return; }
+    if(isNaN(ratingVal) || ratingVal < 1 || ratingVal > 5){ if(msg) msg.innerText = 'Rating mesti antara 1 hingga 5.'; return; }
+
+    const nextIc = icRaw ? ic : (c.ic || '');
+    aduanList[i] = {...c, name, ic: nextIc, dorm, meal_type: meal, rating: ratingVal, message };
+    LS.setItem('aduanList', JSON.stringify(aduanList));
+    renderComplaints(); renderAdminList(); renderRatingAnalytics(); renderStatusCounts();
+    closeEditModal();
+  });
 }
 
 function editRemark(i){
@@ -1908,6 +1952,7 @@ async function init(){
   setRoleUI(getSelectedRole());
   renderStatusCounts();
   wireAdminFilters();
+  wireEditComplaintForm();
   wireFirstTimeAdminSearch();
   wireStudentFilters();
   const ratingEl = safeGet('rating');

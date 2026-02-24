@@ -402,6 +402,48 @@
   <img id="modalImage" alt="Lampiran aduan">
 </div>
 
+<div id="editModal" class="edit-modal" onclick="closeEditModal(event)">
+  <div class="edit-modal-content" onclick="event.stopPropagation()">
+    <div class="edit-modal-header">
+      <h3>Edit Aduan</h3>
+      <button type="button" class="close-btn" aria-label="Tutup" onclick="closeEditModal(event)">×</button>
+    </div>
+    <form id="editComplaintForm">
+      <div class="edit-grid">
+        <label>Nama
+          <input type="text" id="edit_name" required>
+        </label>
+        <label>No Kad Pengenalan
+          <input type="text" id="edit_ic" placeholder="12 digit">
+        </label>
+        <label>Dorm
+          <input type="text" id="edit_dorm">
+        </label>
+        <label>Waktu Makan
+          <select id="edit_meal_type" required>
+            <option value="Sarapan">Sarapan</option>
+            <option value="Makan Tengahari">Makan Tengahari</option>
+            <option value="Kudapan Petang">Kudapan Petang</option>
+            <option value="Makan Malam">Makan Malam</option>
+            <option value="Kudapan Malam">Kudapan Malam</option>
+          </select>
+        </label>
+        <label>Rating (1-5)
+          <input type="number" id="edit_rating" min="1" max="5" required>
+        </label>
+        <label class="full">Aduan / Cadangan
+          <textarea id="edit_message" rows="3"></textarea>
+        </label>
+      </div>
+      <div class="inline-btns" style="margin-top:10px;">
+        <button type="submit" class="btn-primary small">Simpan Perubahan</button>
+        <button type="button" class="btn-ghost small" onclick="closeEditModal(event)">Batal</button>
+        <span id="editMsg" class="small"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
     <section id="menu" class="card" style="display:none;">
       <h2>Menu Makan Asrama</h2>
       <div class="card" style="margin-top:16px;">
@@ -415,7 +457,6 @@
 <script src="app.js?v=20260208-4"></script>
 </body>
 </html>
-
 
 
 
